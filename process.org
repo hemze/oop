@@ -1,0 +1,4 @@
+* Current
+** TODO 
+*** prepare input data
+*** check for file opening errors [output file must be created if not exists]
