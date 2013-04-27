@@ -15,23 +15,23 @@ int main()
   ofstream outFile;
   
   cout << "Input file name: "; cin >> inFileName;
-  cout << "Output file name: "; cin >> outFileName;  
-
+  cout << "Output file name: "; cin >> outFileName;
   inFile.open(inFileName,fstream::in);
+  if(!std::ifstream(inFileName)){
+    cout << "No such file: \"" << inFileName << "\"" << endl;
+    return 1;
+  }
   outFile.open(outFileName,fstream::app);
   while(!inFile.eof()){
     getline(inFile,curr,'.');
-    curr+=".\n";
-    //temp = curr;
-    /*while (i != string::npos){
-      curr.replace(i, 1, ".\n");
-      i = curr.find(".", i);
-    }*/
+    curr += ".\n";
+    if(curr[0]==' '){
+      curr = curr.substr(1,curr.length()-1);
+    }
     outFile.write(curr.c_str(),curr.size());
   }
+  cout << "Wrote to \"" << outFileName << "\"" << endl;
   inFile.close();
   outFile.close();
-
-  system("PAUSE");
-  return EXIT_SUCCESS;
+  return 0;
 }
