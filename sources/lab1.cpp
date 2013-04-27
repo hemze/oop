@@ -10,7 +10,7 @@ int main()
   char inFileName[20],outFileName[20];
   string curr;
   string temp;
-  int i;
+  int i = 0;
   ifstream inFile;
   ofstream outFile;
   
@@ -28,7 +28,13 @@ int main()
     if(curr[0]==' '){
       curr = curr.substr(1,curr.length()-1);
     }
-    outFile.write(curr.c_str(),curr.size());
+    while ((i = curr.find("  ", 0)) > 0){
+      cout << i << endl << curr << endl;
+      sleep(2);
+      curr.replace(i, 2, " ");
+      ;
+    }
+    outFile.write(curr.c_str(),curr.length());
   }
   cout << "Wrote to \"" << outFileName << "\"" << endl;
   inFile.close();
