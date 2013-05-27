@@ -39,9 +39,8 @@ public:
 };
 
 int main(){
-  char inFileName[20]/*,outFileName[20]*/;
+  char inFileName[20];
   cout << "Input file name: "; cin >> inFileName;
-  //cout << "Output file name: "; cin >> outFileName;
   corrector newCorrector(inFileName);
   return 0;
 }
