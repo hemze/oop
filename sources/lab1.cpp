@@ -11,13 +11,12 @@ class DateTime{
   friend ostream& operator<<( ostream&, const DateTime& );
   time_t seconds;
   struct tm * td;
-
+  char buffer[80];
 public:
-  char * buffer;
   DateTime(bool flag){
     cout << "Initialized by default with current date and time." << endl;
     this->td = this->initCurrent();
-    cout << this;
+    cout << *this;
   }
   DateTime(int secs) {
     cout << "Initialized with seconds." << endl;
@@ -35,27 +34,26 @@ public:
     cout << "Initialized with current date and custom time." << endl;
     struct tm * timeinfo;
     timeinfo = this->initCurrent();
-    initDate(0, timeinfo->tm_mon, timeinfo->tm_mday, hours, mins, secs);
+    initDate(false, timeinfo->tm_mon, timeinfo->tm_mday, hours, mins, secs);
   }
 
   DateTime(int year,int month,int day,int hours,int mins,int secs) {
     cout << "Initialized with cutom both date and time." << endl;
     struct tm * timeinfo;
     timeinfo = this->initCurrent();
-    initDate(year, month,day, hours, mins, secs);
+    initDate(year, month, day, hours, mins, secs);
   }
   void initDate(int year,int month,int day,int hours,int mins,int secs){
     time_t rawtime;
-    struct tm * timeinfo;
     const char * weekday[] = { "Понедельник", "Вторник",
                                "Среда", "Четверг",
                                "Пятница", "Суббота",
                                "Воскресенье"};
     /* get current timeinfo and modify it to the user's choice */
-    time ( &rawtime );
 
+    time ( &rawtime );
     this->td = localtime ( &rawtime );
-    this->td->tm_year = (year ? year - 1900 : timeinfo->tm_year);
+    this->td->tm_year = (year ? year - 1900 : this->td->tm_year);
     this->td->tm_mon = month - 1;
     this->td->tm_mday = day;
     this->td->tm_hour = hours;
@@ -63,7 +61,7 @@ public:
     this->td->tm_sec = secs;
     this->seconds = mktime(this->td);
     cout << "(" << this->seconds << ")\n";
-    cout << this;
+    cout << *this;
   }
 
   struct tm * initCurrent(){
@@ -77,7 +75,7 @@ public:
   void initCustom(time_t rawtime){
     this->td = localtime ( &rawtime );
     this->seconds = rawtime;
-    cout << this;
+    cout << *this;
   }
 
   int getSeconds(){
@@ -85,52 +83,92 @@ public:
   }
 
   DateTime operator ++(int){
-    time_t rawtime;
-    rawtime = mktime(this->td);
-    rawtime++;
-    this->td = localtime(&rawtime);
-    return *this;;
+    DateTime dt(*this);
+    seconds++;
+    this->td = localtime(&seconds);
+    return dt;
   }
 
-  DateTime &operator<<(DateTime &dt){
+  DateTime operator ++(){
+    DateTime dt(*this);
+    ++seconds;
+    dt = localtime(&seconds);
+    return dt;
+  }
 
-  cout << dt.buffer;
-  return dt;
-}
+  bool operator > (const DateTime &dt) {
+    if(seconds > dt.seconds) return true;
+    return false;
+  }
 
+  bool operator >= (const DateTime &dt) {
+    if(seconds >= dt.seconds) return true;
+    return false;
+  }
 
+  bool operator < (const DateTime &dt) {
+    if(seconds < dt.seconds) return true;
+    return false;
+  }
+
+  bool operator <= (const DateTime &dt) {
+    if(seconds <= dt.seconds) return true;
+    return false;
+  }
+
+  bool operator == (const DateTime &dt) {
+    if(seconds == dt.seconds) return true;
+    return false;
+  }
+
+  bool operator != (const DateTime &dt) {
+    if(seconds != dt.seconds) return true;
+    return false;
+  }
+
+  int operator - (const DateTime &dt) {
+    return seconds - dt.seconds;
+  }
+
+  DateTime operator += (const DateTime &dt) {
+    if (&dt == this) return *this;
+    if(dt.seconds) seconds += dt.seconds;
+    this->td = localtime(&seconds);
+    return *this;
+  }
+
+  int operator + (const DateTime &dt) {
+    return seconds + dt.seconds;
+  }
   /*operator char*(){
     strftime (this->buffer,80,"%d-%m-%Y %H:%M:%S, %A.",this->td);
     return this->buffer;
   }*/
 };
 
-ostream& operator <<( ostream& os, const DateTime& dt ){    // формат: <счетчик> слово
-  strftime (dt.buffer,80,"%d-%m-%Y %H:%M:%S, %A.\n", dt.td);
-  os << dt.buffer << "\n";
+ostream& operator <<( ostream& os, const DateTime &dt ){
+  char buffer[80];
+  strftime (buffer,80,"%d-%m-%Y %H:%M:%S, %A.\n===========================\n", dt.td);
+  os << "(" << dt.seconds << ")\n" << buffer;
   return os;
 }
 
 int main(){
   int year,month,day,hour,min,sec,lsec;
-  char ans;
-  /* prompt user for date
-  printf ("Enter year: "); scanf ("%d",&year);
-  printf ("Enter month: "); scanf ("%d",&month);
-  printf ("Enter day: "); scanf ("%d",&day);
-  printf ("Enter hours: "); scanf ("%d",&hour);
-  printf ("Enter minutes: "); scanf ("%d",&min);
-  printf ("Enter seconds: "); scanf ("%d",&sec);
-  printf ("Enter seconds (long): "); scanf ("%d",&lsec);
+  //prompt user for date
+  cout << "Enter year: "; cin >> dec  >> year;
+  cout << "Enter month: "; cin >> dec >> month;
+  cout << "Enter day: "; cin >> dec >> day;
+  cout << "Enter hours: "; cin >> dec >> hour;
+  cout << "Enter minutes: "; cin >> dec >> min;
+  cout << "Enter seconds: "; cin >> dec >> sec;
+  cout << "Enter seconds (long): "; cin >> dec >> lsec;
 
-
-  DateTime newDate2(lsec);
-  DateTime newDate3(year,month,day);
-  DateTime newDate4(true,hour,min,sec);
-  DateTime newDate5(year,month,day,hour,min,sec);
-  */DateTime newDate1(true);
-  newDate1++;
-  cout << newDate1;
+  //DateTime newDate1(true);
+  //DateTime newDate2(lsec);
+  //DateTime newDate3(year,month,day);
+  //DateTime newDate4(true,hour,min,sec);
+  //DateTime newDate5(year,month,day,hour,min,sec);
 
   return 0;
 }
