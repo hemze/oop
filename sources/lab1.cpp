@@ -8,6 +8,7 @@ using namespace std;
 
 class DateTime{
 
+  friend ostream& operator<<( ostream&, const DateTime& );
   time_t seconds;
   struct tm * td;
 
@@ -79,15 +80,9 @@ public:
     cout << this;
   }
 
-  struct tm * getDate(){
-    return this->td;
-  }
-
   int getSeconds(){
     return this->seconds;
   }
-
-  friend ostream& operator <<(ostream& s,const DateTime dt);
 
   DateTime operator ++(int){
     time_t rawtime;
@@ -97,20 +92,24 @@ public:
     return *this;;
   }
 
-  operator char*(){
-    strftime (this->buffer,80,"%d-%m-%Y %H:%M:%S, %A.",this->td);
-    return this->buffer;
-  }
-};
+  DateTime &operator<<(DateTime &dt){
 
-ostream& operator<<(ostream& s, const DateTime& dt)
-{
-  char buffer[80];
-  strftime (buffer,80,"%d-%m-%Y %H:%M:%S, %A.",dt.getDate());
-  s << dt.buffer << endl;
-  return s;
+  cout << dt.buffer;
+  return dt;
 }
 
+
+  /*operator char*(){
+    strftime (this->buffer,80,"%d-%m-%Y %H:%M:%S, %A.",this->td);
+    return this->buffer;
+  }*/
+};
+
+ostream& operator <<( ostream& os, const DateTime& dt ){    // формат: <счетчик> слово
+  strftime (dt.buffer,80,"%d-%m-%Y %H:%M:%S, %A.\n", dt.td);
+  os << dt.buffer << "\n";
+  return os;
+}
 
 int main(){
   int year,month,day,hour,min,sec,lsec;
