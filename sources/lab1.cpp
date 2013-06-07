@@ -131,7 +131,6 @@ public:
   }
 
   DateTime operator += (const DateTime &dt) {
-    if (&dt == this) return *this;
     if(dt.seconds) seconds += dt.seconds;
     this->td = localtime(&seconds);
     return *this;
